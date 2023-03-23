@@ -9431,7 +9431,7 @@ OUTPUT(OLED1.elf elf32-littlearm)
  .debug_abbrev  0x0000398f      0x264 src/ASF/sam/utils/syscalls/gcc/syscalls.o
  .debug_abbrev  0x00003bf3      0x463 src/main.o
 
-.debug_loc      0x00000000     0x6ac0
+.debug_loc      0x00000000     0x6ac4
  .debug_loc     0x00000000       0xb3 src/ASF/common/utils/stdio/read.o
  .debug_loc     0x000000b3      0x12b src/ASF/common/utils/stdio/write.o
  .debug_loc     0x000001de      0x1c7 src/ASF/sam/drivers/rtt/rtt.o
@@ -9450,7 +9450,7 @@ OUTPUT(OLED1.elf elf32-littlearm)
  .debug_loc     0x0000568e      0xce3 src/ASF/sam/drivers/pmc/pmc.o
  .debug_loc     0x00006371       0x77 src/ASF/sam/utils/cmsis/same70/source/templates/gcc/startup_same70.o
  .debug_loc     0x000063e8       0xfd src/ASF/sam/utils/syscalls/gcc/syscalls.o
- .debug_loc     0x000064e5      0x5db src/main.o
+ .debug_loc     0x000064e5      0x5df src/main.o
 
 .debug_aranges  0x00000000      0xc58
  .debug_aranges

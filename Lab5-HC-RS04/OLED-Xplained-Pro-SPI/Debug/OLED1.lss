@@ -21,19 +21,19 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   8 .debug_abbrev 00004056  00000000  00000000  0003cedf  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_loc    00006ac0  00000000  00000000  00040f35  2**0
+  9 .debug_loc    00006ac4  00000000  00000000  00040f35  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_aranges 00000c58  00000000  00000000  000479f5  2**0
+ 10 .debug_aranges 00000c58  00000000  00000000  000479f9  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000c60  00000000  00000000  0004864d  2**0
+ 11 .debug_ranges 00000c60  00000000  00000000  00048651  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_macro  0000a80a  00000000  00000000  000492ad  2**0
+ 12 .debug_macro  0000a80a  00000000  00000000  000492b1  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_line   00011b01  00000000  00000000  00053ab7  2**0
+ 13 .debug_line   00011b01  00000000  00000000  00053abb  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_str    000910b6  00000000  00000000  000655b8  2**0
+ 14 .debug_str    000910b6  00000000  00000000  000655bc  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_frame  000023c4  00000000  00000000  000f6670  2**2
+ 15 .debug_frame  000023c4  00000000  00000000  000f6674  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -3925,8 +3925,8 @@ static inline void stdio_serial_init(volatile void *usart, const usart_serial_op
 		// Esperando o pino ECHO subir
 		while (echo_flag == 0);
   40167a:	4d54      	ldr	r5, [pc, #336]	; (4017cc <main+0x1cc>)
-		// gfx_mono_draw_string(texto, 0, 0, &sysfont);
 		// delay_ms(80);
+
 
 		// ================== DESCOMENTAR PARA VIZUALIZAR APENAS O GRAFICO ==================
 		// Nomeando os eixos do grafico no OLED
@@ -4041,16 +4041,16 @@ static inline void stdio_serial_init(volatile void *usart, const usart_serial_op
   401742:	47a0      	blx	r4
   401744:	4e37      	ldr	r6, [pc, #220]	; (401824 <main+0x224>)
   401746:	2469      	movs	r4, #105	; 0x69
-	int altura = distancia * 7 / 250;
+	int altura = distancia * 7 / 300;
   401748:	f8df b0e4 	ldr.w	fp, [pc, #228]	; 401830 <main+0x230>
 			gfx_mono_draw_string(".", 25 + i*10, n, &sysfont);
   40174c:	f8df a0e4 	ldr.w	sl, [pc, #228]	; 401834 <main+0x234>
-	int altura = distancia * 7 / 250;
+	int altura = distancia * 7 / 300;
   401750:	f856 3d04 	ldr.w	r3, [r6, #-4]!
   401754:	ebc3 03c3 	rsb	r3, r3, r3, lsl #3
   401758:	fb8b 2103 	smull	r2, r1, fp, r3
   40175c:	17da      	asrs	r2, r3, #31
-  40175e:	ebc2 1221 	rsb	r2, r2, r1, asr #4
+  40175e:	ebc2 1261 	rsb	r2, r2, r1, asr #5
 	int resultado = 7 - altura;
   401762:	f1c2 0207 	rsb	r2, r2, #7
 			gfx_mono_draw_string(".", 25 + i*10, n, &sysfont);
@@ -4111,7 +4111,7 @@ static inline void stdio_serial_init(volatile void *usart, const usart_serial_op
   401824:	20400044 	.word	0x20400044
   401828:	20400001 	.word	0x20400001
   40182c:	2040000c 	.word	0x2040000c
-  401830:	10624dd3 	.word	0x10624dd3
+  401830:	1b4e81b5 	.word	0x1b4e81b5
   401834:	00403b6c 	.word	0x00403b6c
 
 00401838 <__aeabi_drsub>:
