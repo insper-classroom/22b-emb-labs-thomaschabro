@@ -52,6 +52,9 @@ volatile char but_flag;
 volatile char echo_flag;
 static void RTT_init(float freqPrescale, uint32_t IrqNPulses, uint32_t rttIRQSource);
 
+// Array utilizado para plotar o gráfico
+int distancias[9] = {1, 1, 1, 1, 1, 1, 1, 1, 1};
+
 /***********************************************************************/
 /*           functions                                                 */
 /***********************************************************************/
@@ -81,6 +84,21 @@ void but_callback(void)
 void callback_echo(void)
 {
 	echo_flag = !echo_flag;
+}
+
+int altura_graf(int distancia) {
+	int altura = distancia * 7 / 300;
+	int resultado = 7 - altura;
+	return resultado;
+}
+
+// Funcao para colocar o valor como o ultimo valor do vetor, e deslocar os outros valores
+void atualiza_graf(int distancia) {
+	int i;
+	for (i = 0; i < 8; i++) {
+		distancias[i] = distancias[i+1];
+	}
+	distancias[8] = distancia;
 }
 
 int io_init(void) {	
@@ -137,11 +155,6 @@ int main (void) {
 	// Inicializando
 	io_init();
   
-   
-	// sprintf(texto, "%d", "entrou");
-	// gfx_mono_draw_string("entrou", 50, 0, &sysfont);
- 
-
   /* Insert application code here, after the board has been initialized. */
 	while(1) {
 		
@@ -164,11 +177,49 @@ int main (void) {
 		delta_t = contagem * 10e5 / freq;
 		int distancia = (delta_t * 340 / 2 / 10000);
 
-		// Limpando o OLED e exibindo o valor
-		// -> limpar o oled protege contra bugs de escrita e visualização
-		gfx_mono_draw_filled_rect(0, 0, 128, 32, GFX_PIXEL_CLR);
-		sprintf(texto, "%d cm", distancia);
-		gfx_mono_draw_string(texto, 0, 0, &sysfont);
+		
+
+		// ================== DESCOMENTAR PARA VIZUALIZAR APENAS A DISTANCIA ==================
+		// // Trabalhando com erros
+		// if (distancia > 400) {
+		// 	sprintf(texto, "fora de alcance", distancia);
+		// } else if (distancia > 0 && distancia < 400) {
+		// 	sprintf(texto, "%d cm", distancia);
+		// } else if (distancia < 0) {
+		// 	sprintf(texto, "invalido", texto);
+		// }
+
+		// // Limpando o OLED e exibindo o valor
+		// // |-> limpar o oled protege contra bugs de escrita e visualização
+		// gfx_mono_draw_filled_rect(0, 0, 128, 32, GFX_PIXEL_CLR);
+		// gfx_mono_draw_string(texto, 0, 0, &sysfont);
+		// delay_ms(80);
+
+
+		// ================== DESCOMENTAR PARA VIZUALIZAR APENAS O GRAFICO ==================
+		// Nomeando os eixos do grafico no OLED
+		gfx_mono_draw_string("c", 0, 0, &sysfont);
+		gfx_mono_draw_string("m", 0, 12, &sysfont);
+		gfx_mono_draw_string("tempo", 40, 20, &sysfont);
+		
+		// Definindo maximos e minimos dos valores para plotar no grafico
+		if (distancia > 400) {
+			distancia = 400;
+		} else if (distancia < 0) {
+			distancia = 0;
+		}
+		
+		// Adicionando distancia no array
+		atualiza_graf(distancia);
+		
+		int n = altura_graf(distancias[8]);
+		gfx_mono_draw_filled_rect(8, 0, 128, 10, GFX_PIXEL_CLR);
+
+		// Desenhando o grafico
+		for (int i = 8; i > -1; i--) {
+			int n = altura_graf(distancias[i]);
+			gfx_mono_draw_string(".", 25 + i*10, n, &sysfont);
+		}
 		delay_ms(100);
 	}
 }
