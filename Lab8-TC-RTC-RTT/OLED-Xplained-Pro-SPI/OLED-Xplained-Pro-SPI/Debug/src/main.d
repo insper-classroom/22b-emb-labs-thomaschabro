@@ -1,5 +1,5 @@
 src/main.d src/main.o: ../src/main.c ../src/asf.h \
- ../src/ASF/sam/utils/compiler.h \
+ ../src/ASF/sam/drivers/afec/afec.h ../src/ASF/sam/utils/compiler.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\lib\gcc\arm-none-eabi\6.3.1\include\stddef.h \
  ../src/ASF/common/utils/parts.h \
  ../src/ASF/sam/utils/preprocessor/preprocessor.h \
@@ -152,24 +152,65 @@ src/main.d src/main.o: ../src/main.c ../src/asf.h \
  ../src/ASF/sam/drivers/pmc/pmc.h ../src/ASF/common/services/clock/pll.h \
  ../src/ASF/common/services/clock/same70/pll.h \
  ../src/ASF/common/services/delay/sam/cycle_counter.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/FreeRTOS.h \
+ ../src/config/FreeRTOSConfig.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/projdefs.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/portable.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/deprecated_definitions.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/portable/GCC/ARM_CM7/r0p1/portmacro.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/mpu_wrappers.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/StackMacros.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/croutine.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/list.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/deprecated_definitions.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/event_groups.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/timers.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/task.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/list.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/mpu_wrappers.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/portable.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/projdefs.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/queue.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/semphr.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/queue.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/task.h \
+ ../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/timers.h \
  ../src/ASF/common/services/gpio/gpio.h \
  ../src/ASF/common/services/gpio/sam_gpio/sam_gpio.h \
  ../src/ASF/sam/drivers/pio/pio.h \
  ../src/ASF/common/services/ioport/ioport.h \
  ../src/ASF/common/services/ioport/sam/ioport_pio.h \
  ../src/ASF/sam/drivers/mpu/mpu.h ../src/ASF/sam/drivers/pmc/sleep.h \
+ ../src/ASF/sam/drivers/rtc/rtc.h ../src/ASF/sam/drivers/rtt/rtt.h \
  ../src/ASF/sam/utils/fpu/fpu.h \
  ../src/ASF/sam/boards/same70_xplained/led.h \
- ../src/ASF/sam/drivers/spi/spi.h ../src/ASF/sam/drivers/tc/tc.h \
- ../src/ASF/sam/drivers/pio/pio_handler.h \
+ ../src/ASF/common/services/spi/sam_spi/spi_master.h \
+ ../src/ASF/sam/drivers/spi/spi.h ../src/config/conf_spi_master.h \
+ ../src/ASF/common/services/sleepmgr/sam/sleepmgr.h \
+ ../src/config/conf_sleepmgr.h \
+ ../src/ASF/common/services/sleepmgr/sleepmgr.h \
+ ../src/ASF/common/services/sleepmgr/sam/sleepmgr.h \
+ ../src/ASF/common/utils/stdio/stdio_serial/stdio_serial.h \
+ ../src/ASF/common/services/serial/serial.h \
+ ../src/ASF/common/services/serial/sam_uart/uart_serial.h \
+ ../src/ASF/sam/drivers/uart/uart.h ../src/ASF/sam/drivers/usart/usart.h \
+ ../src/config/conf_uart_serial.h ../src/ASF/sam/drivers/tc/tc.h \
+ ../src/ASF/sam/drivers/twihs/twihs.h \
+ ../src/ASF/common/services/twi/sam_twihs/twihs_master.h \
+ ../src/ASF/common/services/twi/sam_twihs/twihs_slave.h \
+ ../src/ASF/common/services/twi/twihs_master.h \
+ ../src/ASF/common/services/twi/sam_twihs/twihs_master.h \
+ ../src/ASF/common/services/twi/twihs_slave.h \
+ ../src/ASF/sam/drivers/pio/pio_handler.h ../src/config/conf_board.h \
  ../src/oled/gfx_mono_ug_2832hsweg04.h ../src/oled/ssd1306.h \
- ../src/config/conf_board.h ../src/oled/gfx_mono.h \
- ../src/oled/gfx_mono_ug_2832hsweg04.h ../src/oled/gfx_mono_generic.h \
- ../src/oled/gfx_mono_framebuffer.h ../src/oled/gfx_mono_text.h \
- ../src/oled/sysfont.h ../src/config/conf_sysfont.h \
- ../src/oled/gfx_mono_text.h
+ ../src/oled/gfx_mono.h ../src/oled/gfx_mono_ug_2832hsweg04.h \
+ ../src/oled/gfx_mono_generic.h ../src/oled/gfx_mono_framebuffer.h \
+ ../src/oled/gfx_mono_text.h ../src/oled/sysfont.h \
+ ../src/config/conf_sysfont.h ../src/oled/gfx_mono_text.h
 
 ../src/asf.h:
+
+../src/ASF/sam/drivers/afec/afec.h:
 
 ../src/ASF/sam/utils/compiler.h:
 
@@ -481,6 +522,52 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 
 ../src/ASF/common/services/delay/sam/cycle_counter.h:
 
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/FreeRTOS.h:
+
+../src/config/FreeRTOSConfig.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/projdefs.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/portable.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/deprecated_definitions.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/portable/GCC/ARM_CM7/r0p1/portmacro.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/mpu_wrappers.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/StackMacros.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/croutine.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/list.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/deprecated_definitions.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/event_groups.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/timers.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/task.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/list.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/mpu_wrappers.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/portable.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/projdefs.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/queue.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/semphr.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/queue.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/task.h:
+
+../src/ASF/thirdparty/freertos/freertos-8.2.3/Source/include/timers.h:
+
 ../src/ASF/common/services/gpio/gpio.h:
 
 ../src/ASF/common/services/gpio/sam_gpio/sam_gpio.h:
@@ -495,21 +582,61 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 
 ../src/ASF/sam/drivers/pmc/sleep.h:
 
+../src/ASF/sam/drivers/rtc/rtc.h:
+
+../src/ASF/sam/drivers/rtt/rtt.h:
+
 ../src/ASF/sam/utils/fpu/fpu.h:
 
 ../src/ASF/sam/boards/same70_xplained/led.h:
 
+../src/ASF/common/services/spi/sam_spi/spi_master.h:
+
 ../src/ASF/sam/drivers/spi/spi.h:
+
+../src/config/conf_spi_master.h:
+
+../src/ASF/common/services/sleepmgr/sam/sleepmgr.h:
+
+../src/config/conf_sleepmgr.h:
+
+../src/ASF/common/services/sleepmgr/sleepmgr.h:
+
+../src/ASF/common/services/sleepmgr/sam/sleepmgr.h:
+
+../src/ASF/common/utils/stdio/stdio_serial/stdio_serial.h:
+
+../src/ASF/common/services/serial/serial.h:
+
+../src/ASF/common/services/serial/sam_uart/uart_serial.h:
+
+../src/ASF/sam/drivers/uart/uart.h:
+
+../src/ASF/sam/drivers/usart/usart.h:
+
+../src/config/conf_uart_serial.h:
 
 ../src/ASF/sam/drivers/tc/tc.h:
 
+../src/ASF/sam/drivers/twihs/twihs.h:
+
+../src/ASF/common/services/twi/sam_twihs/twihs_master.h:
+
+../src/ASF/common/services/twi/sam_twihs/twihs_slave.h:
+
+../src/ASF/common/services/twi/twihs_master.h:
+
+../src/ASF/common/services/twi/sam_twihs/twihs_master.h:
+
+../src/ASF/common/services/twi/twihs_slave.h:
+
 ../src/ASF/sam/drivers/pio/pio_handler.h:
+
+../src/config/conf_board.h:
 
 ../src/oled/gfx_mono_ug_2832hsweg04.h:
 
 ../src/oled/ssd1306.h:
-
-../src/config/conf_board.h:
 
 ../src/oled/gfx_mono.h:
 

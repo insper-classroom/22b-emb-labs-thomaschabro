@@ -2,9 +2,47 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
+src\ASF\common\services\serial\usart_serial.c
+
+src\ASF\common\services\sleepmgr\sam\sleepmgr.c
+
+src\ASF\common\services\spi\sam_spi\spi_master.c
+
+src\ASF\common\utils\stdio\read.c
+
+src\ASF\common\utils\stdio\write.c
+
+src\ASF\sam\drivers\afec\afec.c
+
+src\ASF\sam\drivers\rtc\rtc.c
+
+src\ASF\sam\drivers\rtt\rtt.c
+
 src\ASF\sam\drivers\spi\spi.c
 
 src\ASF\sam\drivers\tc\tc.c
+
+src\ASF\sam\drivers\twihs\twihs.c
+
+src\ASF\sam\drivers\uart\uart.c
+
+src\ASF\sam\drivers\usart\usart.c
+
+src\ASF\thirdparty\freertos\freertos-8.2.3\Source\croutine.c
+
+src\ASF\thirdparty\freertos\freertos-8.2.3\Source\event_groups.c
+
+src\ASF\thirdparty\freertos\freertos-8.2.3\Source\list.c
+
+src\ASF\thirdparty\freertos\freertos-8.2.3\Source\portable\GCC\ARM_CM7\r0p1\port.c
+
+src\ASF\thirdparty\freertos\freertos-8.2.3\Source\portable\MemMang\heap_1.c
+
+src\ASF\thirdparty\freertos\freertos-8.2.3\Source\queue.c
+
+src\ASF\thirdparty\freertos\freertos-8.2.3\Source\tasks.c
+
+src\ASF\thirdparty\freertos\freertos-8.2.3\Source\timers.c
 
 src\oled\gfx_mono_framebuffer.c
 
