@@ -32,7 +32,19 @@
 #define BUT_3_IDX        19
 #define BUT_3_IDX_MASK   (1u << BUT_3_IDX)
 
-/** RTOS  */
+typedef struct  {
+  uint32_t year;
+  uint32_t month;
+  uint32_t day;
+  uint32_t week;
+  uint32_t hour;
+  uint32_t minute;
+  uint32_t seccond;
+} calendar;
+
+/************************************************************************/
+/* RTOS                                                                 */
+/************************************************************************/
 #define TASK_OLED_STACK_SIZE                (1024*6/sizeof(portSTACK_TYPE))
 #define TASK_OLED_STACK_PRIORITY            (tskIDLE_PRIORITY)
 
@@ -45,7 +57,14 @@ extern void vApplicationTickHook(void);
 extern void vApplicationMallocFailedHook(void);
 extern void xPortSysTickHandler(void);
 
-/** prototypes */
+/************************************************************************/
+/* prototypes                                                           */
+/************************************************************************/
+/* Leitura do valor atual do RTC */           
+uint32_t current_hour, current_min, current_sec;
+uint32_t current_year, current_month, current_day, current_week;
+
+
 void but_callback(void);
 static void BUT_init(void);
 void pin_toggle(Pio *pio, uint32_t mask);
@@ -55,6 +74,9 @@ void TC1_Handler(void);                                     // TC
 void TC4_Handler(void);                                     //
 
 static void RTT_init(float freqPrescale, uint32_t IrqNPulses, uint32_t rttIRQSource); // RTT
+
+
+void RTC_init(Rtc *rtc, uint32_t id_rtc, calendar t, uint32_t irq_type); // RTC
 
 /************************************************************************/
 /* RTOS application funcs                                               */
@@ -78,6 +100,11 @@ extern void vApplicationMallocFailedHook(void) {
 /************************************************************************/
 
 void but_callback(void) {
+
+	/* configura alarme do RTC para daqui 20 segundos */                                                                   
+    rtc_set_date_alarm(RTC, 1, current_month, 1, current_day);                              
+    rtc_set_time_alarm(RTC, 1, current_hour, 1, current_min, 1, current_sec + 5);
+
 }
 
 /************************************************************************/
@@ -88,47 +115,36 @@ static void task_oled(void *pvParameters) {
 	BUT_init();
     
 	gfx_mono_ssd1306_init();
-    gfx_mono_draw_string("Exemplo RTOS", 0, 0, &sysfont);
-    gfx_mono_draw_string("oii", 0, 20, &sysfont);
 
+  	/** Configura timer TC1, canal 1, com interrupcao a 4Hz */
+	TC_init(TC0, ID_TC1, 1, 4);
+  	tc_start(TC0, 1);
 	/** Configura timer TC1, canal 1, com interrupcao a 5Hz */
 	TC_init(TC1, ID_TC4, 1, 5);
   	tc_start(TC1, 1);
-  	/** Configura timer TC0, canal 1, com interrupcao a 4Hz */
-	TC_init(TC0, ID_TC1, 1, 4);
-  	tc_start(TC0, 1);
+	/** Configura timer TC2, canal 1, com interrupcao a 1Hz */
+	TC_init(TC2, ID_TC7, 1, 1);
+  	tc_start(TC2, 1);
 
 	/** Inicia contagem do RTT */
 	RTT_init(4, 16, RTT_MR_ALMIEN);
 
+	/** Configura RTC */
+	calendar rtc_initial = {2018, 3, 19, 12, 15, 45 ,1};
+	RTC_init(RTC, ID_RTC, rtc_initial, RTC_IER_ALREN | RTC_IER_SECEN);
 
-	uint32_t cont=0;
 	for (;;)
 	{
-		char buf[3];
+		char buf[30];
 		
-		cont++;
 		
-		sprintf(buf,"%03d",cont);
-		gfx_mono_draw_string(buf, 0, 20, &sysfont);
+		sprintf(buf,"%02d:%02d:%02d", current_hour, current_min, current_sec);
+		gfx_mono_draw_string(buf, 0, 0, &sysfont);
 				
 		vTaskDelay(1000);
 	}
 }
 
-
-static void task_printConsole(void *pvParameters) {
-	
-	uint32_t cont=0;
-	for (;;)
-	{		
-		cont++;
-		
-		printf("%03d\n",cont);
-		
-		vTaskDelay(1000);
-	}
-}
 
 /************************************************************************/
 /* funcoes                                                              */
@@ -173,6 +189,19 @@ static void BUT_init(void) {
 	pmc_enable_periph_clk(LED_3_ID);
 	pio_configure(LED_3, PIO_OUTPUT_1, LED_3_IDX_MASK, PIO_DEFAULT);
 	
+	// Iniciando botões
+
+	// -- BUT 3 --
+	pmc_enable_periph_clk(BUT_3_ID);
+	pio_configure(BUT_3, PIO_INPUT, BUT_3_IDX_MASK, PIO_PULLUP);
+	pio_handler_set(BUT_3, BUT_3_ID, BUT_3_IDX_MASK, PIO_IT_FALL_EDGE , but_callback);
+
+	pio_enable_interrupt(BUT_3, BUT_3_IDX_MASK);
+	pio_get_interrupt_status(BUT_3);
+
+	NVIC_EnableIRQ(BUT_3_ID);
+	NVIC_SetPriority(BUT_3_ID, 4);	
+
 }
 
 /************************************************************************/
@@ -226,6 +255,19 @@ void TC4_Handler(void) {
 	pin_toggle(LED_P, LED_P_IDX_MASK);
 }
 
+void TC7_Handler(void) {
+	/**
+	* Devemos indicar ao TC que a interrupção foi satisfeita.
+	* Isso é realizado pela leitura do status do periférico
+	**/
+	volatile uint32_t status = tc_get_status(TC2, 1);
+
+	// Atualiza os valores de tempo
+	rtc_get_time(RTC, &current_hour, &current_min, &current_sec);
+    rtc_get_date(RTC, &current_year, &current_month, &current_day, &current_week);
+	
+}
+
 /************************************************************************/
 /* RTT                                                                  */
 /************************************************************************/
@@ -271,6 +313,59 @@ void RTT_Handler(void) {
 }
 
 /************************************************************************/
+/* RTC                                                                  */
+/************************************************************************/
+
+void RTC_init(Rtc *rtc, uint32_t id_rtc, calendar t, uint32_t irq_type) {
+	/* Configura o PMC */
+	pmc_enable_periph_clk(ID_RTC);
+
+	/* Default RTC configuration, 24-hour mode */
+	rtc_set_hour_mode(rtc, 0);
+
+	/* Configura data e hora manualmente */
+	rtc_set_date(rtc, t.year, t.month, t.day, t.week);
+	rtc_set_time(rtc, t.hour, t.minute, t.seccond);
+
+	/* Configure RTC interrupts */
+	NVIC_DisableIRQ(id_rtc);
+	NVIC_ClearPendingIRQ(id_rtc);
+	NVIC_SetPriority(id_rtc, 4);
+	NVIC_EnableIRQ(id_rtc);
+
+	/* Ativa interrupcao via alarme */
+	rtc_enable_interrupt(rtc,  irq_type);
+}
+
+void RTC_Handler(void) {
+    uint32_t ul_status = rtc_get_status(RTC);
+		
+	// /* seccond tick */
+    // if ((ul_status & RTC_SR_SEC) == RTC_SR_SEC) {	
+	// 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+	// 	xSemaphoreGiveFromISR(xSemaphoreClock, &xHigherPriorityTaskWoken);
+	// 	rtc_clear_status(RTC, RTC_SCCR_SECCLR);
+    // }
+	
+
+    /* Time or date alarm */
+    if ((ul_status & RTC_SR_ALARM) == RTC_SR_ALARM) {
+
+		pin_toggle(LED_3, LED_3_IDX_MASK);
+		delay_ms(100);
+		pin_toggle(LED_3, LED_3_IDX_MASK);
+
+    }
+
+    rtc_clear_status(RTC, RTC_SCCR_SECCLR);
+    rtc_clear_status(RTC, RTC_SCCR_ALRCLR);
+    rtc_clear_status(RTC, RTC_SCCR_ACKCLR);
+    rtc_clear_status(RTC, RTC_SCCR_TIMCLR);
+    rtc_clear_status(RTC, RTC_SCCR_CALCLR);
+    rtc_clear_status(RTC, RTC_SCCR_TDERRCLR);
+}
+
+/************************************************************************/
 /* main                                                                 */
 /************************************************************************/
 
@@ -286,10 +381,6 @@ int main(void) {
 	/* Create task to control oled */
 	if (xTaskCreate(task_oled, "oled", TASK_OLED_STACK_SIZE, NULL, TASK_OLED_STACK_PRIORITY, NULL) != pdPASS) {
 	  printf("Failed to create oled task\r\n");
-	}
-	
-	if (xTaskCreate(task_printConsole, "task_printConsole", TASK_PRINTCONSOLE_STACK_SIZE, NULL, TASK_PRINTCONSOLE_STACK_PRIORITY, NULL) != pdPASS) {
-		printf("Failed to create printConsole task\r\n");
 	}
 
 	/* Start the scheduler. */
