@@ -42,6 +42,8 @@ typedef struct  {
   uint32_t seccond;
 } calendar;
 
+xSemaphoreHandle xSemaphoreClock;
+
 /************************************************************************/
 /* RTOS                                                                 */
 /************************************************************************/
@@ -122,9 +124,6 @@ static void task_oled(void *pvParameters) {
 	/** Configura timer TC1, canal 1, com interrupcao a 5Hz */
 	TC_init(TC1, ID_TC4, 1, 5);
   	tc_start(TC1, 1);
-	/** Configura timer TC2, canal 1, com interrupcao a 1Hz */
-	TC_init(TC2, ID_TC7, 1, 1);
-  	tc_start(TC2, 1);
 
 	/** Inicia contagem do RTT */
 	RTT_init(4, 16, RTT_MR_ALMIEN);
@@ -137,11 +136,13 @@ static void task_oled(void *pvParameters) {
 	{
 		char buf[30];
 		
-		
-		sprintf(buf,"%02d:%02d:%02d", current_hour, current_min, current_sec);
-		gfx_mono_draw_string(buf, 0, 0, &sysfont);
-				
-		vTaskDelay(1000);
+		if(xSemaphoreTake(xSemaphoreClock, 10)){
+			rtc_get_date(RTC, &current_year, &current_month, &current_day, &current_week);
+			rtc_get_time(RTC, &current_hour, &current_min, &current_sec);
+			gfx_mono_draw_filled_rect(0, 0, 128, 32, GFX_PIXEL_CLR);
+			sprintf(buf,"%d:%d:%02d",current_hour, current_min, current_sec);
+			gfx_mono_draw_string(buf, 10, 10, &sysfont);
+		}
 	}
 }
 
@@ -255,19 +256,6 @@ void TC4_Handler(void) {
 	pin_toggle(LED_P, LED_P_IDX_MASK);
 }
 
-void TC7_Handler(void) {
-	/**
-	* Devemos indicar ao TC que a interrupção foi satisfeita.
-	* Isso é realizado pela leitura do status do periférico
-	**/
-	volatile uint32_t status = tc_get_status(TC2, 1);
-
-	// Atualiza os valores de tempo
-	rtc_get_time(RTC, &current_hour, &current_min, &current_sec);
-    rtc_get_date(RTC, &current_year, &current_month, &current_day, &current_week);
-	
-}
-
 /************************************************************************/
 /* RTT                                                                  */
 /************************************************************************/
@@ -340,12 +328,12 @@ void RTC_init(Rtc *rtc, uint32_t id_rtc, calendar t, uint32_t irq_type) {
 void RTC_Handler(void) {
     uint32_t ul_status = rtc_get_status(RTC);
 		
-	// /* seccond tick */
-    // if ((ul_status & RTC_SR_SEC) == RTC_SR_SEC) {	
-	// 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	// 	xSemaphoreGiveFromISR(xSemaphoreClock, &xHigherPriorityTaskWoken);
-	// 	rtc_clear_status(RTC, RTC_SCCR_SECCLR);
-    // }
+	/* seccond tick */
+    if ((ul_status & RTC_SR_SEC) == RTC_SR_SEC) {	
+		BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+		xSemaphoreGiveFromISR(xSemaphoreClock, &xHigherPriorityTaskWoken);
+		rtc_clear_status(RTC, RTC_SCCR_SECCLR);
+    }
 	
 
     /* Time or date alarm */
@@ -377,6 +365,11 @@ int main(void) {
 
 	/* Initialize the console uart */
 	configure_console();
+
+	xSemaphoreClock = xSemaphoreCreateBinary();
+	if (xSemaphoreClock == NULL){
+		printf("falha em criar o semaforo \n");
+	}
 
 	/* Create task to control oled */
 	if (xTaskCreate(task_oled, "oled", TASK_OLED_STACK_SIZE, NULL, TASK_OLED_STACK_PRIORITY, NULL) != pdPASS) {
